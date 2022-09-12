@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "serverless-ciccd-iot",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
