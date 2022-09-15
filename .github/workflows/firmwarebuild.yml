@@ -29,7 +29,7 @@ jobs:
           name: esp32_firmware
           path: .pio/build/esp32/*esp32.bin
       - name: Generate deployment package
-        run:  zip -r deploy.zip .pio/build/esp32/*esp32.bin
+        run:  zip -r deploy.zip .pio/build/esp32/*esp32.bin && ls
       - name: Upload to S3
         uses: shallwefootball/s3-upload-action@master
         id: S3
