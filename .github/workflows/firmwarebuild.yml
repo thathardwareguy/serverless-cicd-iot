@@ -28,6 +28,8 @@ jobs:
         with:
           name: esp32_firmware
           path: .pio/build/esp32/*esp32.bin
+      - name: Generate deployment package
+        run:  zip -r deploy.zip .pio/build/esp32/*esp32.bin
       - name: Upload to S3
         uses: shallwefootball/s3-upload-action@master
         id: S3
@@ -35,5 +37,5 @@ jobs:
             aws_key_id: ${{secrets.AWS_KEY_ID}}
             aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
             aws_bucket: ${{secrets.S3_BUCKET_NAME}}
-            source_dir: esp32_firmware.zip
+            source_dir: deploy.zip
             
