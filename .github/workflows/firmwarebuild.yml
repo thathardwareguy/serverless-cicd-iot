@@ -37,5 +37,5 @@ jobs:
             aws_key_id: ${{secrets.AWS_KEY_ID}}
             aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
             aws_bucket: ${{secrets.S3_BUCKET_NAME}}
-            source_dir: deploy.zip
+            source_dir: ./deploy.zip
             
