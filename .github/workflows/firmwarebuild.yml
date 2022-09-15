@@ -28,8 +28,6 @@ jobs:
         with:
           name: esp32_firmware
           path: '.pio/build/esp32/*esp32.bin'
-      - name: Generate deployment package
-        run: zip -r firmware_esp32.zip *esp32.bin
       - name: Upload to S3 as artifact
         uses: medlypharmacy/s3-artifacts-action@master
         with:
