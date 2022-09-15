@@ -27,11 +27,13 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: esp32_firmware
-          path: '.pio/build/esp32/*esp32.bin'
-      - name: Upload to S3 as artifact
-        uses: medlypharmacy/s3-artifacts-action@master
+          path: .pio/build/esp32/*esp32.bin
+      - name: Upload to S3
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
         with:
-          aws_access_key_id: ${{secrets.AWS_KEY_ID}}
-          aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          aws_s3_bucket_name: ${{secrets.S3_BUCKET_NAME}}
-          source_path: './esp32_firmware.zip'
+            aws_key_id: ${{secrets.AWS_KEY_ID}}
+            aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+            aws_bucket: ${{secrets.S3_BUCKET_NAME}}
+            source_dir: .pio/build/esp32/*esp32.bin
+            
