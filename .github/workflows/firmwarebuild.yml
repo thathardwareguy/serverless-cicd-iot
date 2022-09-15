@@ -28,6 +28,8 @@ jobs:
         with:
           name: esp32-firmware
           path: '.pio/build/esp32/*esp32.bin'
+      - name: Generate deployment package
+        run: zip -r firmware_esp32.zip *esp32.bin
       - name: Upload S3    
         uses: shallwefootball/s3-upload-action@master
         id: S3
@@ -35,4 +37,4 @@ jobs:
           aws_key_id: ${{secrets.AWS_KEY_ID}}
           aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
           aws_bucket: esp32-cicd-firmwares
-          source_dir: '.pio/build/esp32/*esp32.bin'
+          source_dir: firmware_esp32.zip
