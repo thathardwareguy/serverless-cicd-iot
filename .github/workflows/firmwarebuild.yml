@@ -26,4 +26,13 @@ jobs:
         run: pio run
       - uses: actions/upload-artifact@v3
         with:
+          name: esp32-firmware
           path: '.pio/build/esp32/*esp32.bin'
+      - name: Upload S3    
+        uses: shallwefootball/s3-upload-action@master
+        id: S3
+        with:
+          aws_key_id: ${{secrets.AWS_KEY_ID}}
+          aws_secret_access_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: esp32-cicd-firmwares
+          source_dir: '.pio/build/esp32/*esp32.bin'
