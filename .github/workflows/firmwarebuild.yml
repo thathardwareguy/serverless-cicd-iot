@@ -29,7 +29,7 @@ jobs:
           name: esp32_firmware
           path: .pio/build/esp32/*esp32.bin
       - name: Generate deployment package
-        run:  zip -r deploy.zip *esp32.bin && ls
+        run:  zip -r deploy.zip .pio/build/esp32/*esp32.bin && ls
       - name: Upload file to bucket
         uses: zdurham/s3-upload-github-action@master
         env:
