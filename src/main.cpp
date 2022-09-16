@@ -181,7 +181,7 @@ void setup()
 }
 
 int ledState = LOW;
-const long interval = 1000;
+const long interval = 3000;
 unsigned long previousMillis = 0;
 
 void loop()
