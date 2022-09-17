@@ -3,8 +3,13 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Update.h>
+#ifndef VERSION
+#define VERSION local
+#endif
+#define STRINGIFY(s) STRINGIFY1(s)
+#define STRINGIFY1(s) #s
+#define RAWVERSION STRINGIFY(VERSION)
 
-#define CURRENT_VERSION VERSION
 #define getFirmwareUrl "http://us-central1-gcloud-ota-update.cloudfunctions.net/getDownloadUrl"
 WiFiClient Client;
 // WiFi credentials
@@ -21,7 +26,7 @@ String getDownloadUrl()
   Serial.print("[HTTP] begin...\n");
 
   String url = getFirmwareUrl;
-  url += String("?version=") + CURRENT_VERSION;
+  url += String("?version=") + RAWVERSION;
   http.begin(url);
 
   Serial.print("[HTTP] GET...\n");

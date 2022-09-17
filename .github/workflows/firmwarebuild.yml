@@ -21,19 +21,15 @@ jobs:
           python-version: '3.9'
       - name: Install PlatformIO Core
         run: pip install --upgrade platformio
-
+      - name: Get latest release version number
+        id: get_version
+        uses: battila7/get-version-action@v2
       - name: Build PlatformIO Project
-        run: pio run
-      - uses: actions/upload-artifact@v3
-        with:
-          name: esp32_firmware
-          path: .pio/build/esp32/*esp32.bin
-      - name: Generate deployment package
-        run:  zip -r deploy.zip .pio/build/esp32/*esp32.bin && ls
+        run: VERSION=${{ steps.get_version.outputs.version }} pio run
       - name: Upload file to bucket
         uses: zdurham/s3-upload-github-action@master
         env:
-          FILE: ./deploy.zip
+          FILE: ./.pio/build/esp32/firmware_${{steps.get_version.outputs.version}}.bin
           AWS_REGION: 'us-east-2'
           S3_BUCKET: ${{ secrets.S3_BUCKET_NAME}}
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_KEY_ID}}
