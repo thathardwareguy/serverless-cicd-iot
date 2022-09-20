@@ -1,0 +1,38 @@
+{
+  "name": "serverless-cicd-iot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thathardwareguy/serverless-cicd-iot.git"
+  },
+  "keywords": [],
+  "author": "Kayode Alade",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thathardwareguy/serverless-cicd-iot/issues"
+  },
+  "homepage": "https://github.com/thathardwareguy/serverless-cicd-iot#readme",
+  "dependencies": {
+    "aws-lambda": "^1.0.7",
+    "aws-sdk": "^2.1218.0",
+    "serverless": "^3.22.0",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-plugin-tracing": "^2.0.0",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1218.0",
+    "serverless-iam-roles-per-function": "^3.2.0",
+    "serverless-webpack": "^5.7.1",
+    "webpack": "^4.46.0"
+  }
+}

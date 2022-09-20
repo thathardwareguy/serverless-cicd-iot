@@ -1,0 +1,89 @@
+# TODO: Change the name of the org 
+org: thathardwareguy
+app: cicd-serverless-app
+service: cicd-serverless-app
+
+plugins:
+  - serverless-webpack
+  - serverless-iam-roles-per-function
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-2'}
+  
+#  X-Ray Tracing
+  tracing: 
+    lambda: true
+
+  environment:
+    PROJECT_NAME: platformio-cicd
+    FIRMWARE_TABLE: firmware-builds-${self:provider.stage}
+    S3_BUCKET_NAME: esp32-cicd-firmwares-${self:provider.stage}
+
+functions:
+
+  # configuire write s3 event to dynamoDB lambda
+  LogFirmwareData:
+    handler: lambda/firmwareData.handler
+    events:
+      - s3:
+          bucket: !Ref AttachmentsBucket 
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .bin
+          existing: true
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-create-todo-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FIRMWARE_TABLE}
+resources:
+  Resources:
+    # TODO: Add any necessary AWS resources
+    FirmwareTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: firmware_version
+            AttributeType: S
+        KeySchema:
+          - AttributeName: firmware_version
+            KeyType: HASH 
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:provider.environment.FIRMWARE_TABLE}
+
+    AttachmentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.S3_BUCKET_NAME}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              MaxAge: 300
+
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        PolicyDocument:
+          Id: MyPolicy
+          Version: '2012-10-17'
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: 'arn:aws:s3:::${self:provider.environment.S3_BUCKET_NAME}/*'
+        Bucket: !Ref AttachmentsBucket    
+  
