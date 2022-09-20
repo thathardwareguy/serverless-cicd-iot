@@ -8,7 +8,7 @@ exports.handler = async (event) => {
     const s3Time = event.Records[0].eventTime;
     const version = fileName.substring(9,15);
     console.log(event);    
-    
+    // Data object
     const params = {
         TableName: process.env.FIRMWARE_TABLE,
         Item: {
