@@ -1,27 +1,29 @@
 // Load the AWS SDK for Node.js
 const AWS = require('aws-sdk');
 // Create the DynamoDB service object
-const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10'});
+const ddb = new AWS.DynamoDB.DocumentClient();
 exports.handler = async (event) => {
     const bucketName = event.Records[0].s3.bucket.name;
     const fileName = event.Records[0].s3.object.key;
     const s3Time = event.Records[0].eventTime;
-    const version = fileName.substring(9,15);
+    const deviceType = fileName.substring(9,14);
+    const version = fileName.substring(15,21);
     console.log(event);    
     // Data object
     const params = {
         TableName: process.env.FIRMWARE_TABLE,
         Item: {
-            'firmware_version': {S: version},
-            'fileName': {S: fileName},
-            'bucketName': {S: bucketName},
-            'timestamp' : {S: s3Time},
+             deviceType: deviceType,
+             firmware_version: version,
+             fileName: fileName,
+             bucketName: bucketName,
+             timestamp:  s3Time,
         },
     };
     
     // Adding the items into the DynamoDB table
     try {
-        const data = await ddb.putItem(params).promise();
+        const {data} = await ddb.putItem(params).promise();
         console.log('Data:',data);
         return data;
     }

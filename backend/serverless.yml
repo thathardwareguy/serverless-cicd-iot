@@ -19,7 +19,7 @@ provider:
 
   environment:
     PROJECT_NAME: platformio-cicd
-    FIRMWARE_TABLE: firmware-builds-${self:provider.stage}
+    FIRMWARE_TABLE: firmware-builds1-${self:provider.stage}
     S3_BUCKET_NAME: esp32-cicd-firmwares-${self:provider.stage}
 
 functions:
@@ -47,10 +47,10 @@ resources:
       Type: AWS::DynamoDB::Table
       Properties:
         AttributeDefinitions:
-          - AttributeName: firmware_version
+          - AttributeName: deviceType
             AttributeType: S
         KeySchema:
-          - AttributeName: firmware_version
+          - AttributeName: deviceType
             KeyType: HASH 
         BillingMode: PAY_PER_REQUEST
         TableName: ${self:provider.environment.FIRMWARE_TABLE}
