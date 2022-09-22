@@ -29,7 +29,7 @@ jobs:
       - name: Upload file to bucket
         uses: zdurham/s3-upload-github-action@master
         env:
-          FILE: ./.pio/build/esp32/firmware_${{steps.get_version.outputs.version}}.bin
+          FILE: ./.pio/build/esp32/firmware_esp32_${{steps.get_version.outputs.version}}.bin
           AWS_REGION: 'us-east-2'
           S3_BUCKET: ${{ secrets.S3_BUCKET_NAME}}
           AWS_ACCESS_KEY_ID: ${{secrets.AWS_KEY_ID}}
