@@ -19,7 +19,7 @@ provider:
 
   environment:
     PROJECT_NAME: platformio-cicd
-    FIRMWARE_TABLE: firmware-builds1-${self:provider.stage}
+    FIRMWARE_TABLE: firmware-builds2-${self:provider.stage}
     S3_BUCKET_NAME: esp32-cicd-firmwares-${self:provider.stage}
 
 functions:
