@@ -7,11 +7,11 @@ if TYPE_CHECKING:
     env: Any = {}
 Import("env")
 
-# access to global construction environment
-#print env
-version = "v3.9.8"
+
+version = "v3.9.9"
 #if git tag is available use for version else use static version number
 envVersionOverride = os.getenv("VERSION", version)
+# access to global construction environment
 build_tag = env['PIOENV']
 
 env.Append(BUILD_FLAGS='-DVERSION=\"%s\"' % envVersionOverride)

@@ -2,6 +2,7 @@
 const AWS = require('aws-sdk');
 // Create the DynamoDB service object
 const ddb = new AWS.DynamoDB.DocumentClient();
+const firmwareTable = process.env.FIRMWARE_TABLE;
 exports.handler = async (event) => {
     const bucketName = event.Records[0].s3.bucket.name;
     const fileName = event.Records[0].s3.object.key;
@@ -11,7 +12,7 @@ exports.handler = async (event) => {
     console.log(event);    
     // Data object
     const params = {
-        TableName: process.env.FIRMWARE_TABLE,
+        TableName: firmwareTable,
         Item: {
              deviceType: deviceType,
              firmware_version: version,

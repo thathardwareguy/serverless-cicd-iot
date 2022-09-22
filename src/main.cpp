@@ -10,7 +10,7 @@
 #define STRINGIFY1(s) #s
 #define RAWVERSION STRINGIFY(VERSION)
 
-#define getFirmwareUrl "http://us-central1-gcloud-ota-update.cloudfunctions.net/getDownloadUrl"
+#define getFirmwareUrl "https://xipr42ffd9.execute-api.us-east-2.amazonaws.com/dev/firmwares"
 WiFiClient Client;
 // WiFi credentials
 const char* ssid = "DIT";         

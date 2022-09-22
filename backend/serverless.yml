@@ -12,14 +12,10 @@ provider:
   runtime: nodejs12.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-2'}
-  
-#  X-Ray Tracing
-  tracing: 
-    lambda: true
 
   environment:
     PROJECT_NAME: platformio-cicd
-    FIRMWARE_TABLE: firmware-builds2-${self:provider.stage}
+    FIRMWARE_TABLE: firmware-builds3-${self:provider.stage}
     S3_BUCKET_NAME: esp32-cicd-firmwares-${self:provider.stage}
 
 functions:
@@ -40,6 +36,19 @@ functions:
         Action:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FIRMWARE_TABLE}
+  GetDownloadUrl:
+    handler: lambda/getDownloadUrl.handler
+    events:
+      - http:
+          method: get
+          path: downloadUrl
+    iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-todo-role-${self:provider.stage}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.FIRMWARE_TABLE}
+
 resources:
   Resources:
     # TODO: Add any necessary AWS resources
