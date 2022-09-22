@@ -6,8 +6,8 @@ exports.handler = async (event) => {
     const bucketName = event.Records[0].s3.bucket.name;
     const fileName = event.Records[0].s3.object.key;
     const s3Time = event.Records[0].eventTime;
-    const deviceType = fileName.substring(9,14);
-    const version = fileName.substring(15,21);
+    const [file,deviceType,ver] = fileName.split("_");
+    const version = ver.replace(/\.[^/.]+$/, "");
     console.log(event);    
     // Data object
     const params = {
