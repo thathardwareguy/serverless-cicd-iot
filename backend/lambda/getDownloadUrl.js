@@ -11,8 +11,24 @@ const semver = require('semver');
  
 exports.handler = async (event) => {
     console.log('Processing event: ', event)
-    //read current version from query parameter
-    const currentVersion = event.queryStringParameters.rawVersion;
+    let currentVersion;
+    let url;
+    try {
+       //read current version from query parameter
+    currentVersion = passVersionParameter(event);  
+    } catch (error) {
+        console.log('Failed to Pass Query Parameter',error.message)
+        return {
+            statusCode: 400,
+            headers: {
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify({
+                error : 'Invalid Parameter'
+            })
+        } 
+    }
+   
     console.log(currentVersion);
     //read most recent data from db
     const params = {
@@ -31,7 +47,9 @@ exports.handler = async (event) => {
     // check if device needs update
     const needsUpdate = semver.gt(firmwareVersion, currentVersion)
     console.log(needsUpdate);
-    // signed url parameters
+
+    if(needsUpdate){
+      // signed url parameters
     const bucketDetails = {
         Bucket: result.Items[0].bucketName,
         Key: result.Items[0].fileName,
@@ -40,12 +58,12 @@ exports.handler = async (event) => {
     console.log(bucketDetails);
     // form pre-signed url from data returned from db
     try {
-        let downloadUrl = await new Promise((resolve, reject) => {
-          s3.getSignedUrl('getObject', bucketDetails, (err, downloadUrl) => {
-            err ? reject(err) : resolve(downloadUrl);
+          url = await new Promise((resolve, reject) => {
+          s3.getSignedUrl('getObject', bucketDetails, (err, url) => {
+            err ? reject(err) : resolve(url);
           });
         });
-        console.log(downloadUrl)
+        console.log(url)
       } catch (err) {
         if (err) {
           console.log(err)
@@ -58,7 +76,29 @@ exports.handler = async (event) => {
             "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
-            downloadUrl
+            "Response" : url
         })
     }
+    }
+    else
+    {
+       return {
+        statusCode: 200,
+        headers: {
+            "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({
+            Response : 'Device up to date'
+        })
+    }
+    }
+    
   };
+function passVersionParameter(event)
+{
+ const version = event.queryStringParameters.rawVersion;
+ if (!version){
+   return undefined;
+ }
+ return version;
+}

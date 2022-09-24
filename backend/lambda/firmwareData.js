@@ -24,7 +24,7 @@ exports.handler = async (event) => {
     
     // Adding the items into the DynamoDB table
     try {
-        const {data} = await ddb.put(params).promise();
+        const data = await ddb.put(params).promise();
         console.log('Data:',data);
         return data;
     }
