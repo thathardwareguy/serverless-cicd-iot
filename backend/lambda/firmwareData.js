@@ -15,7 +15,7 @@ exports.handler = async (event) => {
         TableName: firmwareTable,
         Item: {
              deviceType: deviceType,
-             firmware_version: version,
+             firmwareVersion: version,
              fileName: fileName,
              bucketName: bucketName,
              timestamp:  s3Time,

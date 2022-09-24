@@ -4,35 +4,61 @@ const AWS = require('aws-sdk');
 const ddb = new AWS.DynamoDB.DocumentClient();
 // dynamoDB table
 const firmwareTable = process.env.FIRMWARE_TABLE;
-//read current version from query parameter
-//read most recent data from db
+// Create s3 service object
+const s3 = new AWS.S3();
 // use semver to compare version and return firmware if version has been updated
-// form pre-signed url from data returned from db
-// return donwload url to device 
+const semver = require('semver');
+ 
 exports.handler = async (event) => {
     console.log('Processing event: ', event)
-    //read query parameter
-    const currentVersion = getQueryParameter(event,'rawVersion');
+    //read current version from query parameter
+    const currentVersion = event.queryStringParameters.rawVersion;
     console.log(currentVersion);
-    //read data from dataBase
+    //read most recent data from db
     const params = {
         TableName: firmwareTable,
         KeyConditionExpression: "#deviceType = :deviceType",
-        ExpressionAttributeValues: {
-            ":deviceType": deviceType
+        ExpressionAttributeNames: {
+            "#deviceType": "deviceType"
         },
-        "Limit": "1",
-        "ScanIndexForward": false
+        ExpressionAttributeValues: {
+            ":deviceType": "esp32"
+        }
     };
     const result = await ddb.query(params).promise();
     console.log(result);
+    const firmwareVersion = result.Items[0].firmwareVersion;
+    // check if device needs update
+    const needsUpdate = semver.gt(firmwareVersion, currentVersion)
+    console.log(needsUpdate);
+    // signed url parameters
+    const bucketDetails = {
+        Bucket: result.Items[0].bucketName,
+        Key: result.Items[0].fileName,
+        Expires: 60 * 5
+      };
+    console.log(bucketDetails);
+    // form pre-signed url from data returned from db
+    try {
+        let downloadUrl = await new Promise((resolve, reject) => {
+          s3.getSignedUrl('getObject', bucketDetails, (err, downloadUrl) => {
+            err ? reject(err) : resolve(downloadUrl);
+          });
+        });
+        console.log(downloadUrl)
+      } catch (err) {
+        if (err) {
+          console.log(err)
+        }
+      }
+    // return download url to device
     return {
         statusCode: 200,
         headers: {
             "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
-            "data": result,
-        }),
+            downloadUrl
+        })
     }
-  }
+  };

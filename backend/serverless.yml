@@ -41,7 +41,8 @@ functions:
     events:
       - http:
           method: get
-          path: downloadUrl
+          path: firmwares
+          cors : true
     iamRoleStatementsName: ${self:provider.environment.PROJECT_NAME}-get-todo-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
