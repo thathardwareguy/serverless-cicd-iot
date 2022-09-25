@@ -32,8 +32,8 @@ Blog post with details:
     * `serverless`
 * For subsequent deployments:
     * `serverless deploy`
-
-* ![Serverless Deploy Output](./images/serverless-deploy-output.PNG)
+* Lambda Functions Deployment Output
+![Serverless Deploy Output](./images/serverless-deploy-output.PNG)
 
 
 ### Upload firmware with PlatfomIO
