@@ -32,6 +32,7 @@ Blog post with details:
     * `serverless`
 * For subsequent deployments:
     * `serverless deploy`
+
 * ![Serverless Deploy Output](./images/serverless-deploy-output.PNG)
 
 
