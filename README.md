@@ -1,11 +1,12 @@
-# Serverless CICD and OTA flow for IoT devices with AWS and Platform IO 
+# Serverless CICD and OTA flow for IoT devices with AWS and PlatformIO 
 
 How to build your firmware continuously in the cloud and sent to your devices automatically.
 
 Blog post with details: 
 
-### Install all dependencies 
+### Install all dependencies
 
+* Clone this repository.
 * Run npm install:
     * `npm install`
 
@@ -23,12 +24,15 @@ Blog post with details:
   * In the left sidebar, click Secrets and click New repository secret.
   * Type the secret names has shown in the firmwarebuild.yml and save.
 
-### Deploy Cloud Functions
+### Deploy lambda Functions
 
-* Run on the command line:
-```
-./deploy-prod.sh
-```
+* Navigate into the backend directory.
+    * `cd backend`
+* For the first time, create an application in your org in Serverless portal:
+    * `serverless`
+* For subsequent deployments:
+    * `serverless deploy`
+
 
 ### Upload firmware with PlatfomIO
 
