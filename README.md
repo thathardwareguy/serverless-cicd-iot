@@ -30,6 +30,7 @@ Blog post with details:
     * `cd backend`
 * For the first time, create an application in your org in Serverless portal:
     * `serverless`
+![Serverless Application](./images/serverless-dashboard.PNG)
 * For subsequent deployments:
     * `serverless deploy`
 * Lambda Functions Deployment Output
