@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 Import("env")
 
 
-version = "v4.1.0"
+version = "v4.1.2"
 #if git tag is available use for version else use static version number
 envVersionOverride = os.getenv("VERSION", version)
 # access to global construction environment
