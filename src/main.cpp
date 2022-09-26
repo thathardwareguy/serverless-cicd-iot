@@ -26,7 +26,7 @@ String getDownloadUrl()
   Serial.print("[HTTP] begin...\n");
 
   String url = getFirmwareUrl;
-  url += String("?version=") + RAWVERSION;
+  url += String("?rawVersion=") + RAWVERSION;
   http.begin(url);
 
   Serial.print("[HTTP] GET...\n");
@@ -200,4 +200,5 @@ void loop()
     ledState = ledState == LOW ? HIGH : LOW;
     digitalWrite(BUILTIN_LED, ledState);
   }
+Serial.println('Reading...');
 }
