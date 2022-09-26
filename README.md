@@ -35,6 +35,7 @@ Blog post with details:
     * `serverless deploy`
 * Lambda Functions Deployment Output
 ![Serverless Deploy Output](./images/serverless-deploy-output.PNG)
+* Copy and save the endpoint 
 
 
 ### Upload firmware with PlatfomIO
@@ -49,6 +50,6 @@ To deploy to the board you can use the “Build” and “Upload” buttons on P
 ### References
 
 *  https://dzone.com/articles/how-to-approach-ota-updates-for-iot
-* 
-* 
-* http://docs.platformio.org/en/latest
+*  https://github.com/alvarowolfx/gcloud-ota-arduino-update 
+*  https://docs.aws.amazon.com 
+*  https://docs.platformio.org/en/latest/integration/ci/github-actions.html 
