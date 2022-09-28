@@ -3,6 +3,8 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Update.h>
+#include <WiFiClientSecure.h>
+#include "secrets.h"
 #ifndef VERSION
 #define VERSION local
 #endif
@@ -10,8 +12,8 @@
 #define STRINGIFY1(s) #s
 #define RAWVERSION STRINGIFY(VERSION)
 
-#define getFirmwareUrl "https://xipr42ffd9.execute-api.us-east-2.amazonaws.com/dev/firmwares"
-WiFiClient Client;
+#define getFirmwareUrl "https://strzmsrcsi.execute-api.us-east-2.amazonaws.com/dev/firmwares"
+WiFiClientSecure Client;
 // WiFi credentials
 const char* ssid = "DIT";         
 const char* password = "Project12"; 
@@ -21,30 +23,30 @@ const char* password = "Project12";
  */
 String getDownloadUrl()
 {
-  HTTPClient http;
+  HTTPClient https;
   String downloadUrl;
   Serial.print("[HTTP] begin...\n");
 
   String url = getFirmwareUrl;
   url += String("?rawVersion=") + RAWVERSION;
-  http.begin(url);
+  https.begin(url);
 
   Serial.print("[HTTP] GET...\n");
-  // start connection and send HTTP header
-  int httpCode = http.GET();
+  // start connection and send HTTPS header
+  int httpCode = https.GET();
 
   // httpCode will be negative on error
   if (httpCode > 0)
   {
     // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
 
     // file found at server
     if (httpCode == HTTP_CODE_OK)
     {
-      String payload = http.getString();
+      String payload = https.getString();
       Serial.println(payload);
-      downloadUrl = payload;
+      downloadUrl = payload.substring(13,payload.length()-2);
     }
     else
     {
@@ -53,10 +55,10 @@ String getDownloadUrl()
   }
   else
   {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
   }
 
-  http.end();
+  https.end();
 
   return downloadUrl;
 }
@@ -66,24 +68,26 @@ String getDownloadUrl()
  */
 bool downloadUpdate(String url)
 {
-  HTTPClient http;
+  HTTPClient https;
   Serial.print("[HTTP] Download begin...\n");
 
-  http.begin(url);
+  https.begin(url);
 
   Serial.print("[HTTP] GET...\n");
   // start connection and send HTTP header
-  int httpCode = http.GET();
+  delay(3000);
+  Serial.println("Start update...");
+  int httpCode = https.GET();
   if (httpCode > 0)
   {
     // HTTP header has been send and Server response header has been handled
     Serial.printf("[HTTP] GET... code: %d\n", httpCode);
-
+    bool flag = true;
     // file found at server
     if (httpCode == HTTP_CODE_OK)
     {
 
-      int contentLength = http.getSize();
+      int contentLength = https.getSize();
       Serial.println("contentLength : " + String(contentLength));
 
       if (contentLength > 0)
@@ -91,13 +95,14 @@ bool downloadUpdate(String url)
         bool canBegin = Update.begin(contentLength);
         if (canBegin)
         {
-          WiFiClient stream = http.getStream();
+          WiFiClient stream = https.getStream();
           Serial.println("Begin OTA. This may take 2 - 5 mins to complete. Things might be quite for a while.. Patience!");
           size_t written = Update.writeStream(stream);
 
           if (written == contentLength)
           {
             Serial.println("Written : " + String(written) + " successfully");
+            flag = false;
           }
           else
           {
@@ -155,8 +160,7 @@ void setup()
   Serial.begin(115200);
   Serial.setDebugOutput(true);
   pinMode(LED_BUILTIN, OUTPUT);
-
-  delay(3000);
+  delay(10000);
   Serial.println("\n Starting");
   Serial.println();
   Serial.print("Connecting to wifi: ");
@@ -167,7 +171,9 @@ void setup()
     delay(500);
     Serial.print(".");
   }
-
+   Client.setCACert(AWS_CERT_CA);
+  Serial.println(RAWVERSION);
+  delay(3000);
   // Check if we need to download a new version
   String downloadUrl = getDownloadUrl();
   if (downloadUrl.length() > 0)
@@ -191,9 +197,7 @@ unsigned long previousMillis = 0;
 
 void loop()
 {
-
   unsigned long currentMillis = millis();
-
   if (currentMillis - previousMillis >= interval)
   {
     previousMillis = currentMillis;
@@ -201,4 +205,5 @@ void loop()
     digitalWrite(BUILTIN_LED, ledState);
   }
 Serial.println("Reading to test version 4.1.1....");
+delay(2000);
 }
