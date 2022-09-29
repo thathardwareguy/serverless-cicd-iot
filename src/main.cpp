@@ -201,6 +201,6 @@ void loop()
     ledState = ledState == LOW ? HIGH : LOW;
     digitalWrite(BUILTIN_LED, ledState);
   }
-Serial.println("Reading to test version 4.1.1....");
+Serial.println(RAWVERSION);
 delay(2000);
 }
