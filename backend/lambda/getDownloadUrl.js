@@ -1,4 +1,4 @@
-const aws = require("aws-sdk");
+const AWS = require('aws-sdk');
 const semver = require("semver");
 
 exports.handler = async (event) => {
@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     const needsUpdate = await checkForUpdate(dbResult, currentVersion);
 
     if (needsUpdate) {
-      const url = await getSignedUrl(dbResult);
+      const url = getSignedUrl(dbResult); //await getSignedUrl(dbResult);
 
       // return download url to device
       return response({
@@ -104,23 +104,26 @@ const checkForUpdate = async (result, currentVersion) => {
  * @param {StPromiseResult<AWS.DynamoDB.DocumentClient.QueryOutput, AWS.AWSError>ring} result
  * @returns Promise<string>
  */
-const getSignedUrl = async (result) => {
+const getSignedUrl = (result) => {
   // Create s3 service object
-  const s3 = new AWS.S3();
-
+  //const s3 = new AWS.S3();
+   /*
   // signed url parameters
   const bucketDetails = {
     Bucket: result.Items[0].bucketName,
     Key: result.Items[0].fileName,
     Expires: 60 * 5,
   };
-
-  // form pre-signed url from data returned from db
+  */
+  const url = `http://${result.Items[0].bucketName}.s3.us-east-2.amazonaws.com/${result.Items[0].fileName}`
+  // form pre-signed url from data returned from db 
+  /*
   const url = await new Promise((resolve, reject) => {
     s3.getSignedUrl("getObject", bucketDetails, (err, url) => {
       err ? reject(err) : resolve(url);
     });
   });
+  */
 
   return url;
 };

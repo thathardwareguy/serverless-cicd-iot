@@ -3,8 +3,6 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Update.h>
-#include <WiFiClientSecure.h>
-#include "secrets.h"
 #ifndef VERSION
 #define VERSION local
 #endif
@@ -13,7 +11,7 @@
 #define RAWVERSION STRINGIFY(VERSION)
 
 #define getFirmwareUrl "https://strzmsrcsi.execute-api.us-east-2.amazonaws.com/dev/firmwares"
-WiFiClientSecure Client;
+WiFiClient Client;
 // WiFi credentials
 const char* ssid = "DIT";         
 const char* password = "Project12"; 
@@ -23,28 +21,28 @@ const char* password = "Project12";
  */
 String getDownloadUrl()
 {
-  HTTPClient https;
+  HTTPClient http;
   String downloadUrl;
   Serial.print("[HTTP] begin...\n");
 
   String url = getFirmwareUrl;
   url += String("?rawVersion=") + RAWVERSION;
-  https.begin(url);
+  http.begin(url);
 
   Serial.print("[HTTP] GET...\n");
-  // start connection and send HTTPS header
-  int httpCode = https.GET();
+  // start connection and send HTTP header
+  int httpCode = http.GET();
 
   // httpCode will be negative on error
   if (httpCode > 0)
   {
     // HTTP header has been send and Server response header has been handled
-    Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+    Serial.printf("[HTTP] GET... code: %d\n", httpCode);
 
     // file found at server
     if (httpCode == HTTP_CODE_OK)
     {
-      String payload = https.getString();
+      String payload = http.getString();
       Serial.println(payload);
       downloadUrl = payload.substring(13,payload.length()-2);
     }
@@ -55,10 +53,10 @@ String getDownloadUrl()
   }
   else
   {
-    Serial.printf("[HTTP] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] GET... failed, error: %s\n", http.errorToString(httpCode).c_str());
   }
 
-  https.end();
+  http.end();
 
   return downloadUrl;
 }
@@ -68,16 +66,16 @@ String getDownloadUrl()
  */
 bool downloadUpdate(String url)
 {
-  HTTPClient https;
+  HTTPClient http;
   Serial.print("[HTTP] Download begin...\n");
 
-  https.begin(url);
+  http.begin(url);
 
   Serial.print("[HTTP] GET...\n");
   // start connection and send HTTP header
   delay(3000);
   Serial.println("Start update...");
-  int httpCode = https.GET();
+  int httpCode = http.GET();
   if (httpCode > 0)
   {
     // HTTP header has been send and Server response header has been handled
@@ -87,7 +85,7 @@ bool downloadUpdate(String url)
     if (httpCode == HTTP_CODE_OK)
     {
 
-      int contentLength = https.getSize();
+      int contentLength = http.getSize();
       Serial.println("contentLength : " + String(contentLength));
 
       if (contentLength > 0)
@@ -95,7 +93,7 @@ bool downloadUpdate(String url)
         bool canBegin = Update.begin(contentLength);
         if (canBegin)
         {
-          WiFiClient stream = https.getStream();
+          WiFiClient stream = http.getStream();
           Serial.println("Begin OTA. This may take 2 - 5 mins to complete. Things might be quite for a while.. Patience!");
           size_t written = Update.writeStream(stream);
 
@@ -171,7 +169,6 @@ void setup()
     delay(500);
     Serial.print(".");
   }
-   Client.setCACert(AWS_CERT_CA);
   Serial.println(RAWVERSION);
   delay(3000);
   // Check if we need to download a new version
@@ -204,6 +201,6 @@ void loop()
     ledState = ledState == LOW ? HIGH : LOW;
     digitalWrite(BUILTIN_LED, ledState);
   }
-Serial.println(RAWVERSION);
+Serial.println("Reading to test version 4.1.1....");
 delay(2000);
 }
