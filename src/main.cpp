@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "secrets.h"
 //Include required libraries
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -69,7 +70,7 @@ bool downloadUpdate(String url)
   HTTPClient http;
   Serial.print("[HTTP] Download begin...\n");
 
-  http.begin(url);
+  http.begin(url,AMAZON_ROOT_CA);
 
   Serial.print("[HTTP] GET...\n");
   // start connection and send HTTP header
