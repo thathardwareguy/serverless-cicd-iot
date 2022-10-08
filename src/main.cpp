@@ -71,7 +71,7 @@ bool downloadUpdate(String url)
   HTTPClient https;
   Serial.print("[HTTP] Download begin...\n");
 
-  https.begin(url);
+  https.begin(url,AMAZON_ROOT_CA);
 
   Serial.print("[HTTP] GET...\n");
   // start connection and send HTTP header
@@ -173,7 +173,6 @@ void setup()
   }
   Serial.println(RAWVERSION);
   delay(3000);
-  Client.setCACert(AMAZON_ROOT_CA);
   // Check if we need to download a new version
   String downloadUrl = getDownloadUrl();
   if (downloadUrl.length() > 0)
